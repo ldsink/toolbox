@@ -14,13 +14,13 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A1
 
 # Create a list file for MongoDB.
 . /etc/lsb-release
-echo "deb [ arch=amd64 ] http://repo.mongodb.org/apt/ubuntu $DISTRIB_CODENAME/mongodb-org/$MONGODB_VERSION multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list
+echo "deb [ arch=amd64 ] http://mirrors.aliyun.com/mongodb/apt/ubuntu $DISTRIB_CODENAME/mongodb-org/$MONGODB_VERSION multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list
 
 # Reload local package database.
 sudo apt-get update
 
 # Install the MongoDB packages.
-sudo apt-get install -y mongodb-org
+sudo apt install -y mongodb-org
 
 # Start MongoDB.
 sudo service mongod start
