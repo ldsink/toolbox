@@ -1,6 +1,7 @@
 #!/bin/bash
 # ZHOU Cheng <c.zhou@live.com>
-# Referrer: https://docs.mongodb.com/manual/tutorial/transparent-huge-pages/
+# Disable Transparent Huge Pages (THP) in Ubuntu
+# https://docs.mongodb.com/manual/tutorial/transparent-huge-pages/
 
 set -e
 
@@ -53,3 +54,13 @@ case $1 in
     ;;
 esac
 EOL
+
+# Make it executable.
+sudo chmod 755 /etc/init.d/disable-transparent-hugepages
+
+# Configure your operating system to run it on boot.
+sudo update-rc.d disable-transparent-hugepages defaults
+
+# Test Changes
+cat /sys/kernel/mm/transparent_hugepage/enabled
+cat /sys/kernel/mm/transparent_hugepage/defrag
