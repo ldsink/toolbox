@@ -1,6 +1,13 @@
-#!/bin/sh
-# zhoucheng@ldsink.com
+#!/bin/bash
+# ZHOU Cheng <c.zhou@live.com>
+
 set -e
+
+# Run as root
+if [ "$EUID" -ne 0 ]
+then echo "Please run as root"
+    exit
+fi
 
 . /etc/lsb-release
 

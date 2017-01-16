@@ -1,5 +1,6 @@
-#!/bin/sh
-# zhoucheng@ldsink.com
+#!/bin/bash
+# ZHOU Cheng <c.zhou@live.com>
+
 set -e
 
 MONGODB_VERSION="3.4"
