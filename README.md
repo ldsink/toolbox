@@ -1,3 +1,4 @@
 toolbox
 ===
-some useful scripts in this box.
+* some useful scripts.
+* some configuration files.
