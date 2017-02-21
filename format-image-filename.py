@@ -36,11 +36,13 @@ def format_image_filename(file_path, file_name):
         print("{} 不需要转化".format(file_name))
         return
     elif file_name.startswith("wx_camera_"):
+        # Example: wx_camera_1485925660871.jpg
         timestamp = int(file_name[10:20])
         image_time = datetime.datetime.fromtimestamp(timestamp)
         rename_file_by_time(file_path, file_name, image_time)
         return
     elif file_name.startswith("mmexport"):
+        # Example: mmexport1483794982818.jpg
         timestamp = int(file_name[8:18])
         image_time = datetime.datetime.fromtimestamp(timestamp)
         rename_file_by_time(file_path, file_name, image_time)
@@ -48,7 +50,6 @@ def format_image_filename(file_path, file_name):
     return
 
 if __name__ == '__main__':
-    dir_path = sys.argv[1]
     if len(sys.argv) < 2 or (not os.path.isdir(sys.argv[1])):
         print("需要传入图片目录")
         exit()
