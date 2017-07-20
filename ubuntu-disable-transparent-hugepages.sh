@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # ZHOU Cheng <c.zhou@live.com>
 # Disable Transparent Huge Pages (THP) in Ubuntu
 # https://docs.mongodb.com/manual/tutorial/transparent-huge-pages/

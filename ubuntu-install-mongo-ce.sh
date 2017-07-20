@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # ZHOU Cheng <c.zhou@live.com>
 
 set -e
