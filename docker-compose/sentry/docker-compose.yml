@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:4-alpine
+
+  sentry:
+    image: sentry:8.22.0
+    depends_on:
+      - redis
+    links:
+      - redis
+    ports:
+      - 8080:9000
+    volumes:
+      - ./sentry.conf.py:/etc/sentry/sentry.conf.py
+    environment:
+      SENTRY_REDIS_HOST: redis
+
+  sentry_celery_beat:
+    image: sentry:8.22.0
+    depends_on:
+      - redis
+    volumes:
+      - ./sentry.conf.py:/etc/sentry/sentry.conf.py
+    command: "run cron"
+    environment:
+      SENTRY_REDIS_HOST: redis
+
+  sentry_celery_worker_1:
+    image: sentry:8.22.0
+    depends_on:
+      - redis
+    command: "run worker"
+    volumes:
+      - ./sentry.conf.py:/etc/sentry/sentry.conf.py
+    environment:
+      SENTRY_REDIS_HOST: redis
+
+  sentry_celery_worker_2:
+    image: sentry:8.22.0
+    depends_on:
+      - redis
+    command: "run worker"
+    volumes:
+      - ./sentry.conf.py:/etc/sentry/sentry.conf.py
+    environment:
+      SENTRY_REDIS_HOST: redis
+
+  sentry_celery_worker_3:
+    image: sentry:8.22.0
+    depends_on:
+      - redis
+    command: "run worker"
+    volumes:
+      - ./sentry.conf.py:/etc/sentry/sentry.conf.py
+    environment:
+      SENTRY_REDIS_HOST: redis
