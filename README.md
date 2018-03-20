@@ -19,3 +19,4 @@ Description | Script| Usage
 docker-compose
 ---
 * Redis Standalone
+* PostgreSQL Standalone
