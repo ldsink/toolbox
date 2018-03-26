@@ -21,3 +21,5 @@ docker-compose
 ---
 * Redis Standalone
 * PostgreSQL Standalone
+* Jenkins LTS
+* Sentry
