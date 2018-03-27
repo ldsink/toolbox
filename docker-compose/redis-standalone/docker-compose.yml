@@ -4,5 +4,6 @@ services:
   redis:
     image: redis:4.0.8
     container_name: redis-standalone
+    restart: always
     ports:
       - 6379:6379
