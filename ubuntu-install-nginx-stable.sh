@@ -21,8 +21,8 @@ fi
 
 # add nginx source list
 sudo cat > /etc/apt/sources.list.d/nginx.list << EOL
-deb http://nginx.org/packages/ubuntu/ $DISTRIB_CODENAME nginx
-deb-src http://nginx.org/packages/ubuntu/ $DISTRIB_CODENAME nginx
+deb https://nginx.org/packages/ubuntu/ $DISTRIB_CODENAME nginx
+deb-src https://nginx.org/packages/ubuntu/ $DISTRIB_CODENAME nginx
 EOL
 
 # install nginx stable version
