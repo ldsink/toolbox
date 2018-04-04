@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: secret
       POSTGRES_USER: postgres
     volumes:
-      - /var/lib/postgresql/data
+      - ./pgdata:/var/lib/postgresql/data
 
   sentry:
     image: sentry:8.22.0
