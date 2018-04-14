@@ -21,17 +21,19 @@ done
 case "$mirror" in
     douban)
         host="pypi.douban.com"
-        url="https://pypi.douban.com/simple"
+        url="https://pypi.douban.com/simple/"
         ;;
     *)
         host="mirrors.aliyun.com"
-        url="https://mirrors.aliyun.com/pypi/simple"
+        url="https://mirrors.aliyun.com/pypi/simple/"
         ;;
 esac
 
 mkdir -p ~/.pip
 cat > ~/.pip/pip.conf << EOF
 [global]
-trusted-host = ${host}
 index-url = ${url}
+
+[install]
+trusted-host = ${host}
 EOF
