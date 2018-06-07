@@ -2,8 +2,8 @@ version: '3'
 
 services:
   redis:
-    image: redis:4.0.8
+    image: redis:4-alpine
     container_name: redis-standalone
     restart: always
     ports:
-      - 6379:6379
+      - 127.0.0.1:6379:6379
