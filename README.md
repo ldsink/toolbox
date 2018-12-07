@@ -7,6 +7,7 @@ toolbox
 
 Description | Script| Usage
 ---|---|---
+`从root用户初始化ubuntu用户` | [init-ubuntu-user-from-root.sh](https://raw.githubusercontent.com/ldsink/toolbox/master/init-ubuntu-user-from-root.sh) | `curl -sSL https://raw.githubusercontent.com/ldsink/toolbox/master/init-ubuntu-user-from-root.sh \| sh`
 `Ubuntu`使用国内DNS（腾讯DNSPod, 阿里DNS） | [SetDNS.sh](https://raw.githubusercontent.com/ldsink/toolbox/master/SetDNS.sh) | `curl -sSL https://raw.githubusercontent.com/ldsink/toolbox/master/SetDNS.sh \| sudo sh`
 `Ubuntu`关闭THP | [ubuntu-disable-transparent-hugepages.sh](https://raw.githubusercontent.com/ldsink/toolbox/master/ubuntu-disable-transparent-hugepages.sh) | `curl -sSL https://raw.githubusercontent.com/ldsink/toolbox/master/ubuntu-disable-transparent-hugepages.sh \| sudo sh`
 `Ubuntu`开启BBR（linux kernel 4.9+） | [ubuntu-enable-BBR.sh](https://raw.githubusercontent.com/ldsink/toolbox/master/ubuntu-enable-BBR.sh) | `curl -sSL https://raw.githubusercontent.com/ldsink/toolbox/master/ubuntu-enable-BBR.sh \| sudo sh`
