@@ -2,7 +2,7 @@ version: '3'
 
 services:
   redis:
-    image: redis:4-alpine
+    image: redis:5.0.2-alpine
     restart: always
 
   postgresql:
@@ -15,7 +15,7 @@ services:
       - ./pgdata:/var/lib/postgresql/data
 
   sentry:
-    image: sentry:8.22.0
+    image: sentry:9.0.0
     restart: always
     depends_on:
       - redis
@@ -32,7 +32,7 @@ services:
       SENTRY_POSTGRES_HOST: postgresql
 
   sentry_celery_beat:
-    image: sentry:8.22.0
+    image: sentry:9.0.0
     restart: always
     depends_on:
       - redis
@@ -48,7 +48,7 @@ services:
     command: "run cron"
 
   sentry_celery_worker_1:
-    image: sentry:8.22.0
+    image: sentry:9.0.0
     restart: always
     depends_on:
       - redis
@@ -64,7 +64,7 @@ services:
     command: "run worker"
 
   sentry_celery_worker_2:
-    image: sentry:8.22.0
+    image: sentry:9.0.0
     restart: always
     depends_on:
       - redis
