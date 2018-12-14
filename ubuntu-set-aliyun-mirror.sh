@@ -11,7 +11,7 @@ fi
 
 # backup current source list
 if [ -e "/etc/apt/sources.list" ]; then
-    sudo mv /etc/apt/sources.list /etc/apt/sources.list.$(date +%Y%m%d%H%M%S).bak
+    sudo cp /etc/apt/sources.list /etc/apt/sources.list.$(date +%Y%m%d%H%M%S).bak
 fi
 
 # set aliyun mirror
