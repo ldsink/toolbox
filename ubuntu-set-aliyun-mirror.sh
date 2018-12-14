@@ -9,23 +9,10 @@ then echo "Please run as root"
     exit
 fi
 
-. /etc/lsb-release
-
 # backup current source list
 if [ -e "/etc/apt/sources.list" ]; then
     sudo mv /etc/apt/sources.list /etc/apt/sources.list.$(date +%Y%m%d%H%M%S).bak
 fi
 
 # set aliyun mirror
-sudo cat > /etc/apt/sources.list << EOL
-deb https://mirrors.aliyun.com/ubuntu/ $DISTRIB_CODENAME main restricted universe multiverse
-deb https://mirrors.aliyun.com/ubuntu/ $DISTRIB_CODENAME-security main restricted universe multiverse
-deb https://mirrors.aliyun.com/ubuntu/ $DISTRIB_CODENAME-updates main restricted universe multiverse
-deb https://mirrors.aliyun.com/ubuntu/ $DISTRIB_CODENAME-proposed main restricted universe multiverse
-deb https://mirrors.aliyun.com/ubuntu/ $DISTRIB_CODENAME-backports main restricted universe multiverse
-deb-src https://mirrors.aliyun.com/ubuntu/ $DISTRIB_CODENAME main restricted universe multiverse
-deb-src https://mirrors.aliyun.com/ubuntu/ $DISTRIB_CODENAME-security main restricted universe multiverse
-deb-src https://mirrors.aliyun.com/ubuntu/ $DISTRIB_CODENAME-updates main restricted universe multiverse
-deb-src https://mirrors.aliyun.com/ubuntu/ $DISTRIB_CODENAME-proposed main restricted universe multiverse
-deb-src https://mirrors.aliyun.com/ubuntu/ $DISTRIB_CODENAME-backports main restricted universe multiverse
-EOL
+sed -i -E "s/deb (ht|f)tp(s?)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%\$#_]*)?\/ubuntu/deb https\:\/\/mirrors\.aliyun\.com\/ubuntu/g" /etc/apt/sources.list
