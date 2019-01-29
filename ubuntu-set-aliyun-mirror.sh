@@ -15,4 +15,4 @@ if [ -e "/etc/apt/sources.list" ]; then
 fi
 
 # set aliyun mirror
-sed -i -E "s/deb (ht|f)tp(s?)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%\$#_]*)?\/ubuntu/deb https\:\/\/mirrors\.aliyun\.com\/ubuntu/g" /etc/apt/sources.list
+sed -i -E "s/deb (ht|f)tp(s?)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%\$#_]*)?\/ubuntu/deb http\:\/\/mirrors\.aliyun\.com\/ubuntu/g" /etc/apt/sources.list
