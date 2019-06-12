@@ -9,8 +9,8 @@ echo " Required: linux kernel 4.9+"
 echo "----------------------------------------"
 
 # Run as root
-if [ "$EUID" -ne 0 ]
-then echo "Please run as root"
+if [ "$(id -u)" -ne "0" ] ; then
+    echo "Please run as root"
     exit
 fi
 
