@@ -5,8 +5,8 @@ set -e
 
 MONGODB_VERSION="3.4"
 
-if [ "$EUID" -ne 0 ]
-then echo "Please run as root"
+if [ "$(id -u)" -ne "0" ] ; then
+    echo "Please run as root"
     exit
 fi
 
