@@ -23,9 +23,13 @@ case "$mirror" in
         host="pypi.douban.com"
         url="https://pypi.douban.com/simple/"
         ;;
-    *)
+    aliyun)
         host="mirrors.aliyun.com"
         url="https://mirrors.aliyun.com/pypi/simple/"
+        ;;
+    *)
+        host="mirrors.cloud.tencent.com"
+        url="https://mirrors.cloud.tencent.com/pypi/simple/"
         ;;
 esac
 
