@@ -23,14 +23,17 @@ Description | Script| Usage
 shell command lines
 ---
 
-enable `Universe` repository
+Enable `Universe` repository
 > sudo add-apt-repository universe
 
-update and upgrade packages
+Update and upgrade packages
 > sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 
-set timezone to shanghai
+Set timezone to shanghai
 > sudo timedatectl set-timezone Asia/Shanghai
+
+Nginx reload service
+> sudo nginx -t -c /etc/nginx/nginx.conf && sudo service nginx reload
 
 docker-compose
 ---
