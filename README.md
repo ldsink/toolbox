@@ -27,7 +27,7 @@ enable `Universe` repository
 > sudo add-apt-repository universe
 
 update and upgrade packages
-> sudo apt update && sudo apt upgrade -y && sudo autoremove -y
+> sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 
 set timezone to shanghai
 > sudo timedatectl set-timezone Asia/Shanghai
