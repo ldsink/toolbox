@@ -19,6 +19,15 @@ Description | Script| Usage
 设置PyPI源（默认腾讯云，支持豆瓣、阿里云） | [set-pypi-mirror.sh](https://raw.githubusercontent.com/ldsink/toolbox/master/set-pypi-mirror.sh) | `curl -sSL https://raw.githubusercontent.com/ldsink/toolbox/master/set-pypi-mirror.sh \| sh`
 设置npm淘宝源| [set-npm-mirror.sh](https://raw.githubusercontent.com/ldsink/toolbox/master/set-npm-mirror.sh) | `curl -sSL https://raw.githubusercontent.com/ldsink/toolbox/master/set-npm-mirror.sh \| sh`
 
+Shell command lines
+---
+
+enable `Universe` repository
+> sudo add-apt-repository universe
+
+update and upgrade packages
+> sudo apt update && sudo apt upgrade -y && sudo autoremove -y
+
 docker-compose
 ---
 
