@@ -6,7 +6,7 @@ services:
     restart: always
 
   postgresql:
-    image: postgres:10.9-alpine
+    image: postgres:11.5-alpine
     restart: always
     environment:
       POSTGRES_PASSWORD: secret
@@ -15,7 +15,7 @@ services:
       - ./pgdata:/var/lib/postgresql/data
 
   sentry:
-    image: sentry:9.1.1
+    image: sentry:9.1.2
     restart: always
     depends_on:
       - redis
@@ -32,7 +32,7 @@ services:
       SENTRY_POSTGRES_HOST: postgresql
 
   sentry_celery_beat:
-    image: sentry:9.1.1
+    image: sentry:9.1.2
     restart: always
     depends_on:
       - redis
@@ -48,7 +48,7 @@ services:
     command: "run cron"
 
   sentry_celery_worker_1:
-    image: sentry:9.1.1
+    image: sentry:9.1.2
     restart: always
     depends_on:
       - redis
@@ -64,7 +64,7 @@ services:
     command: "run worker"
 
   sentry_celery_worker_2:
-    image: sentry:9.1.1
+    image: sentry:9.1.2
     restart: always
     depends_on:
       - redis
