@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  clickhouse:
+    image: yandex/clickhouse-server
+    container_name: clickhouse-server
+    restart: always
+    ulimits:
+      nofile:
+        soft: "262144"
+        hard: "262144"
+    ports:
+      - 8123:8123
+      - 9000:9000
+    volumes:
+      - ./clickhouse_server:/var/lib/clickhouse yandex/clickhouse-server
