@@ -1,4 +1,5 @@
 .idea/
 docker-compose/jenkins-lts/jenkins_home
-docker-compose/clickhouse/clickhouse
+docker-compose/clickhouse/clickhouse-data
+docker-compose/clickhouse/clickhouse-log
 docker-compose/postgres-standalone/pgdata
