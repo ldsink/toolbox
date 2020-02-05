@@ -1,8 +1,11 @@
 jenkins:
+  image: jenkins/jenkins:lts
+  user: root
   restart: always
-  build: .
   ports:
-    - 127.0.0.1:8080:8080
+    - 8080:8080
   volumes:
     - ./jenkins_home:/var/jenkins_home
-  user: jenkins
+    # Using docker in a dockerized Jenkins container
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /usr/bin/docker:/usr/bin/docker
