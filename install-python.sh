@@ -26,6 +26,11 @@ if [ "${version}" != "" ]; then
 fi
 
 echo "Python-${python_version} will install on ${python_path}"
+read -r -p "Are you sure? [y/N] " response
+if [[ ! "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    exit 0
+fi
+
 cd "${python_path}" || exit 1
 
 echo "Install required packages"
@@ -39,6 +44,7 @@ wget "https://www.python.org/ftp/python/${python_version}/Python-${python_versio
 
 echo "Unzip source code"
 tar xvf "Python-${python_version}.tgz"
+rm -f "Python-${python_version}.tgz"
 
 echo "Configure and install Python-${python-version}"
 cd "Python-${python_version}" || exit 2
