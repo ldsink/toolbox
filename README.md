@@ -9,6 +9,7 @@ Based on Debian, for deepin, ubuntu etc.
 
 Description | Script| Usage
 ---|---|---
+安装 Python | [install-python.sh](https://raw.githubusercontent.com/ldsink/toolbox/master/install-python.sh) | `curl -sSL https://raw.githubusercontent.com/ldsink/toolbox/master/install-python.sh \| sudo bash`
 安装`MongoDB CE` | [install-mongo-ce.sh](https://raw.githubusercontent.com/ldsink/toolbox/master/install-mongo-ce.sh) | `curl -sSL https://raw.githubusercontent.com/ldsink/toolbox/master/install-mongo-ce.sh \| sudo bash`
 安装`Nginx Stable` | [install-nginx-stable.sh](https://raw.githubusercontent.com/ldsink/toolbox/master/install-nginx-stable.sh) | `curl -sSL https://raw.githubusercontent.com/ldsink/toolbox/master/install-nginx-stable.sh \| sudo bash`
 安装 PostgreSQL 10 | [install-postgresql-10.sh](https://raw.githubusercontent.com/ldsink/toolbox/master/install-postgresql-10.sh) | `curl -sSL https://raw.githubusercontent.com/ldsink/toolbox/master/install-postgresql-10.sh \| bash`
