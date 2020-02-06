@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ZHOU Cheng <c.zhou@live.com>
 
 # List of tz database time zones
