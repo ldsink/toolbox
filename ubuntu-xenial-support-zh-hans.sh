@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ZHOU Cheng <c.zhou@live.com>
 # Support chinese in Ubuntu Xenial
 

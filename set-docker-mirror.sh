@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ZHOU Cheng <c.zhou@live.com>
 
 # Run as root

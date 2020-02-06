@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Set DNS Server in Ubuntu
 
 head=/etc/resolvconf/resolv.conf.d/head
@@ -12,7 +12,7 @@ nameserver 223.5.5.5
 nameserver 223.6.6.6
 EOF
 	/sbin/resolvconf -u
-	
+
 	echo "Reconfig /etc/resolv.conf success."
 }
 
@@ -24,7 +24,7 @@ restore_resolvconf(){
 	fi
 
 	/sbin/resolvconf -u
-	
+
 	echo "Resotre /etc/resolv.conf success."
 }
 
