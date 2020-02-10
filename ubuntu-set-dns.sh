@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Set DNS Server in Ubuntu
 
 head=/etc/resolvconf/resolv.conf.d/head
