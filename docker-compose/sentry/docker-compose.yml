@@ -2,11 +2,11 @@ version: '3'
 
 services:
   redis:
-    image: redis:5.0.5-alpine
+    image: redis:5-alpine
     restart: always
 
   postgresql:
-    image: postgres:11.5-alpine
+    image: postgres:12-alpine
     restart: always
     environment:
       POSTGRES_PASSWORD: secret
@@ -47,23 +47,7 @@ services:
       SENTRY_POSTGRES_HOST: postgresql
     command: "run cron"
 
-  sentry_celery_worker_1:
-    image: sentry:9.1.2
-    restart: always
-    depends_on:
-      - redis
-      - postgresql
-    links:
-      - redis
-      - postgresql
-    volumes:
-      - ./sentry.conf.py:/etc/sentry/sentry.conf.py
-    environment:
-      SENTRY_REDIS_HOST: redis
-      SENTRY_POSTGRES_HOST: postgresql
-    command: "run worker"
-
-  sentry_celery_worker_2:
+  sentry_celery_worker:
     image: sentry:9.1.2
     restart: always
     depends_on:
