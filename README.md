@@ -26,6 +26,9 @@ Description | Script| Usage
 shell command lines
 ---
 
+Choose default editor
+> sudo update-alternatives --config editor
+
 Enable `Universe` repository
 > sudo add-apt-repository universe
 
