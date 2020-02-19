@@ -26,6 +26,9 @@ Description | Script| Usage
 shell command lines
 ---
 
+Install Docker
+> sudo ./get-docker.sh --mirror Aliyun
+
 Choose default editor
 > sudo update-alternatives --config editor
 
