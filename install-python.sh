@@ -19,7 +19,7 @@ if [[ ! -d "${python_path}" ]]; then
 fi
 
 # Set python version
-python_version="3.8.1"
+python_version="3.8.2"
 read -p "Set python version (default: ${python_version} ):" version
 if [ "${version}" != "" ]; then
   python_version="${version}"
