@@ -6,6 +6,7 @@
 import datetime
 import os
 import sys
+import time
 
 
 def get_image_format_filename(file_path, image_time, file_extension):
@@ -45,14 +46,18 @@ def format_image_filename(file_path, file_name):
     elif file_name.startswith('microMsg.'):
         # Example: microMsg.1435764349881.jpg
         timestamp = int(file_name[9:19])
+    elif file_name.startswith('微信图片_'):
+        # Example: 微信图片_20180323230724
+        timestamp = time.strptime(file_name[5:19], "%Y%m%d%H%M%S")
+        timestamp = time.mktime(timestamp)
     if timestamp:  # image file in examples, rename it.
         image_time = datetime.datetime.fromtimestamp(timestamp)
         rename_file_by_time(file_path, file_name, image_time)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2 or (not os.path.isdir(sys.argv[1])):
-        print('需要传入图片目录')
-        exit()
-    for filename in os.listdir(sys.argv[1]):
-        format_image_filename(sys.argv[1], filename)
+    current_path = os.getcwd()
+    if len(sys.argv) > 2 and (not os.path.isdir(sys.argv[1])):
+        current_path = sys.argv[1]
+    for filename in os.listdir(current_path):
+        format_image_filename(current_path, filename)
