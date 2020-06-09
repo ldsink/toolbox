@@ -2,5 +2,5 @@
 # ZHOU Cheng <c.zhou@live.com>
 
 cat > ~/.npmrc << EOF
-registry=https://registry.npm.taobao.org
+registry=https://mirrors.cloud.tencent.com/npm/
 EOF
