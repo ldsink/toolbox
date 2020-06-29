@@ -1,0 +1,16 @@
+# https://hub.docker.com/_/mongo
+
+# Use root/example as user/password credentials
+version: '3'
+
+services:
+  mongo:
+    image: mongo:4.2
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+    volumes:
+      - ./datadir:/data/db
