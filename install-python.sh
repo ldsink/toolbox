@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
 # ZHOU Cheng <c.zhou@live.com>
 
-# Run as root
 if [ "$(id -u)" -ne "0" ] ; then
     echo "Please run as root"
     exit
 fi
 
-# Set install path
 python_path=$(pwd)
-read -p "Set python install path (default: ${python_path} ):" path
+read -r -p "Set python install path (default: ${python_path} ):" path
 if [ "${path}" != "" ]; then
   python_path="${path}"
 fi
@@ -18,9 +16,8 @@ if [[ ! -d "${python_path}" ]]; then
   mkdir -p "${python_path}"
 fi
 
-# Set python version
-python_version="3.8.2"
-read -p "Set python version (default: ${python_version} ):" version
+python_version="3.8.5"
+read -r -p "Set python version (default: ${python_version} ):" version
 if [ "${version}" != "" ]; then
   python_version="${version}"
 fi
