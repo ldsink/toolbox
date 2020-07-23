@@ -44,6 +44,26 @@ Set timezone to shanghai
 Nginx reload service
 > sudo nginx -t -c /etc/nginx/nginx.conf && sudo service nginx reload
 
+Changing your Git author identity [ref](https://www.git-tower.com/learn/git/faq/change-author-name-email)
+```shell
+git filter-branch --env-filter '
+WRONG_EMAIL="cheng@macos.local"
+NEW_NAME="ZHOU Cheng"
+NEW_EMAIL="c.zhou@live.com"
+
+if [ "$GIT_COMMITTER_EMAIL" = "$WRONG_EMAIL" ]
+then
+    export GIT_COMMITTER_NAME="$NEW_NAME"
+    export GIT_COMMITTER_EMAIL="$NEW_EMAIL"
+fi
+if [ "$GIT_AUTHOR_EMAIL" = "$WRONG_EMAIL" ]
+then
+    export GIT_AUTHOR_NAME="$NEW_NAME"
+    export GIT_AUTHOR_EMAIL="$NEW_EMAIL"
+fi
+' --tag-name-filter cat -- --branches --tags
+```
+
 docker-compose
 ---
 
