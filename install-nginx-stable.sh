@@ -3,27 +3,22 @@
 
 set -e
 
-# Run as root
 if [ "$(id -u)" -ne "0" ] ; then
     echo "Please run as root"
     exit
 fi
 
-. /etc/lsb-release
+echo "Install the prerequisites"
+apt install curl gnupg2 ca-certificates lsb-release -y
 
-# add the key used to sign the nginx packages and repository to the apt program keyring.
-wget https://nginx.org/keys/nginx_signing.key && sudo apt-key add nginx_signing.key && rm nginx_signing.key
+echo "Add the key used to sign the nginx packages and repository to the apt program keyring"
+curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add -
 
-# backup current source list
-if [ -e "/etc/apt/sources.list.d/nginx.list" ]; then
-    sudo mv /etc/apt/sources.list.d/nginx.list /etc/apt/sources.list.d/nginx.list.$(date +%Y%m%d%H%M%S).bak
-fi
+echo "Verify that you now have the proper key"
+apt-key fingerprint ABF5BD827BD9BF62
 
-# add nginx source list
-sudo cat > /etc/apt/sources.list.d/nginx.list << EOL
-deb https://nginx.org/packages/ubuntu/ $DISTRIB_CODENAME nginx
-deb-src https://nginx.org/packages/ubuntu/ $DISTRIB_CODENAME nginx
-EOL
+echo "Set up the apt repository for stable nginx packages"
+echo "deb http://nginx.org/packages/ubuntu `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list
 
-# install nginx stable version
-sudo apt update && sudo apt install nginx -y
+echo "Install nginx stable version"
+apt update && apt install nginx -y
