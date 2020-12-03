@@ -11,8 +11,8 @@ fi
 sudo cat > /etc/docker/daemon.json << EOL
 {
     "registry-mirrors": [
-        "https://dockerhub.azk8s.cn",
-        "https://reg-mirror.qiniu.com"
+        "https://hub-mirror.c.163.com",
+        "https://mirror.baidubce.com"
     ]
 }
 EOL
