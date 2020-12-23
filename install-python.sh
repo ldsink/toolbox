@@ -36,8 +36,10 @@ sudo apt install -y make build-essential libssl-dev zlib1g-dev
 sudo apt install -y libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm
 sudo apt install -y libncurses5-dev  libncursesw5-dev xz-utils tk-dev
 
-echo "Download python source release"
-wget "https://www.python.org/ftp/python/${python_version}/Python-${python_version}.tgz"
+#echo "Download python source release"
+#wget "https://www.python.org/ftp/python/${python_version}/Python-${python_version}.tgz"
+echo "Download python source release from https://npm.taobao.org/mirrors/"
+wget "https://npm.taobao.org/mirrors/python/${python_version}/Python-${python_version}.tgz"
 
 echo "Unzip source code"
 tar xvf "Python-${python_version}.tgz"
