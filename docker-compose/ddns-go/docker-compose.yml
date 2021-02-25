@@ -1,0 +1,9 @@
+jenkins:
+  image: jeessy/ddns-go
+  restart: always
+  ports:
+    - 9876:9876
+  volumes:
+    - ./ddns-go:/root
+  networks:
+    - frontend
