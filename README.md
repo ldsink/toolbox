@@ -1,5 +1,6 @@
 Toolbox
 ===
+
 * some useful scripts.
 * some configuration files.
 
@@ -13,7 +14,7 @@ Description | Script| Usage
 选择默认编辑器 | - | `sudo update-alternatives --config editor`
 `Ubuntu` 开启 `universe` 仓库 | - | `sudo add-apt-repository universe`
 安装 docker | [get-docker.sh](./get-docker.sh) | `wget -O get-docker.sh https://gitee.com/ldsink/toolbox/raw/master/get-docker.sh && chmod +x get-docker.sh && sudo ./get-docker.sh --mirror Aliyun`
-安装 Python | [install-python.sh](./install-python.sh) | `curl -sSL https://gitee.com/ldsink/toolbox/raw/master/install-python.sh \| sudo bash`
+安装 Python | [install-python.sh](./install-python.sh) | `wget -O install-python.sh https://gitee.com/ldsink/toolbox/raw/master/install-python.sh && chmod +x install-python.sh && sudo ./install-python.sh`
 安装`MongoDB CE` | [install-mongo-ce.sh](./install-mongo-ce.sh) | `curl -sSL https://gitee.com/ldsink/toolbox/raw/master/install-mongo-ce.sh \| sudo bash`
 安装`Nginx Stable` | [install-nginx-stable.sh](./install-nginx-stable.sh) | `curl -sSL https://gitee.com/ldsink/toolbox/raw/master/install-nginx-stable.sh \| sudo bash`
 安装 PostgreSQL 10 | [install-postgresql-10.sh](./install-postgresql-10.sh) | `curl -sSL https://gitee.com/ldsink/toolbox/raw/master/install-postgresql-10.sh \| bash`
@@ -36,6 +37,7 @@ Nginx reload service
 > sudo nginx -t -c /etc/nginx/nginx.conf && sudo service nginx reload
 
 Changing your Git author identity [ref](https://www.git-tower.com/learn/git/faq/change-author-name-email)
+
 ```shell
 git filter-branch --env-filter '
 WRONG_EMAIL="cheng@macos.local"

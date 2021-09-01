@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # ZHOU Cheng <c.zhou@live.com>
 
-if [ "$(id -u)" -ne "0" ] ; then
-    echo "Please run as root"
-    exit
+if [ "$(id -u)" -ne "0" ]; then
+  echo "Please run as root"
+  exit
 fi
 
 python_path=$(pwd)
@@ -25,7 +25,7 @@ fi
 echo "Python-${python_version} will install on ${python_path}"
 read -r -p "Are you sure? [y/N] " response
 if [[ ! "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-    exit 0
+  exit 0
 fi
 
 cd "${python_path}" || exit 1
@@ -34,7 +34,7 @@ echo "Install required packages"
 sudo apt update
 sudo apt install -y make build-essential libssl-dev zlib1g-dev
 sudo apt install -y libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm
-sudo apt install -y libncurses5-dev  libncursesw5-dev xz-utils tk-dev
+sudo apt install -y libncurses5-dev libncursesw5-dev xz-utils tk-dev
 
 #echo "Download python source release"
 #wget "https://www.python.org/ftp/python/${python_version}/Python-${python_version}.tgz"
