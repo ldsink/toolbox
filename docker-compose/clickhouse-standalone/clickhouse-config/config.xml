@@ -220,13 +220,6 @@
         </test_unavailable_shard>
     </remote_servers>
 
-
-    <!-- If element has 'incl' attribute, then for it's value will be used corresponding substitution from another file.
-         By default, path to file with substitutions is /etc/metrika.xml. It could be changed in config in 'include_from' element.
-         Values for substitutions are specified in /yandex/name_of_substitution elements in that file.
-      -->
-    <include_from>/etc/clickhouse-server/metrika.xml</include_from>
-
     <!-- ZooKeeper is used to store metadata about replicas, when using Replicated tables.
          Optional. If you don't use replicated tables, you could omit that.
 
