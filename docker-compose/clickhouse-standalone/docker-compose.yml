@@ -1,10 +1,10 @@
-# ClickHouse Document: https://clickhouse.yandex/docs/en/
-# ClickHouse Docker Hub: https://hub.docker.com/r/yandex/clickhouse-server
+# ClickHouse Document: https://clickhouse.com/docs/en/
+# ClickHouse Docker Hub: https://hub.docker.com/r/clickhouse/clickhouse-server
 
 version: '3.7'
 services:
   clickhouse:
-    image: yandex/clickhouse-server
+    image: clickhouse/clickhouse-server
     container_name: clickhouse-server
     restart: always
     ulimits:
