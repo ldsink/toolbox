@@ -16,7 +16,7 @@ if [[ ! -d "${python_path}" ]]; then
   mkdir -p "${python_path}"
 fi
 
-python_version="3.10.5"
+python_version="3.11.0"
 read -r -p "Set python version (default: ${python_version} ):" version
 if [ "${version}" != "" ]; then
   python_version="${version}"
