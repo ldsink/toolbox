@@ -19,10 +19,6 @@ done
 
 # default use aliyun mirror
 case "$mirror" in
-    douban)
-        host="pypi.douban.com"
-        url="https://pypi.douban.com/simple/"
-        ;;
     aliyun)
         host="mirrors.aliyun.com"
         url="https://mirrors.aliyun.com/pypi/simple/"
