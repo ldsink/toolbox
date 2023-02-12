@@ -1,7 +1,5 @@
 # ClickHouse Document: https://clickhouse.com/docs/en/
 # ClickHouse Docker Hub: https://hub.docker.com/r/clickhouse/clickhouse-server
-
-version: '3.7'
 services:
   clickhouse:
     image: clickhouse/clickhouse-server
