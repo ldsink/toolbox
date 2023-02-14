@@ -16,7 +16,7 @@ if [[ ! -d "${python_path}" ]]; then
   mkdir -p "${python_path}"
 fi
 
-python_version="3.11.0"
+python_version="3.11.2"
 read -r -p "Set python version (default: ${python_version} ):" version
 if [ "${version}" != "" ]; then
   python_version="${version}"
@@ -38,8 +38,8 @@ sudo apt install -y libncurses5-dev libncursesw5-dev xz-utils tk-dev
 
 #echo "Download python source release"
 #wget "https://www.python.org/ftp/python/${python_version}/Python-${python_version}.tgz"
-echo "Download python source release from https://npm.taobao.org/mirrors/"
-wget "https://npm.taobao.org/mirrors/python/${python_version}/Python-${python_version}.tgz"
+echo "Download python source release from https://cdn.npmmirror.com/"
+wget "https://cdn.npmmirror.com/binaries/python/${python_version}/Python-${python_version}.tgz"
 
 echo "Unzip source code"
 tar xvf "Python-${python_version}.tgz"
