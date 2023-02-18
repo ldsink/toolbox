@@ -13,6 +13,7 @@ Based on Debian, for deepin, ubuntu etc.
 | ------------------------------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 设置中国时区(Asia/Shanghai)                      | -                                                                                    | `sudo timedatectl set-timezone Asia/Shanghai`                                                                                                                                                       |
 | 选择默认编辑器                                   | -                                                                                    | `sudo update-alternatives --config editor`                                                                                                                                                          |
+| debian 系升级系统                                | -                                                                                    | `sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y`                                                                                                                                  |
 | `Ubuntu` 开启 `universe` 仓库                    | -                                                                                    | `sudo add-apt-repository universe`                                                                                                                                                                  |
 | 安装 docker                                      | [get-docker.sh](./get-docker.sh)                                                     | `wget -O get-docker.sh https://gitee.com/ldsink/toolbox/raw/master/get-docker.sh && chmod +x get-docker.sh && sudo ./get-docker.sh --mirror Aliyun`                                                 |
 | 安装 Python                                      | [install-python.sh](./install-python.sh)                                             | `wget -O install-python.sh https://gitee.com/ldsink/toolbox/raw/master/install-python.sh && chmod +x install-python.sh && sudo ./install-python.sh`                                                 |
@@ -31,12 +32,6 @@ Based on Debian, for deepin, ubuntu etc.
 
 shell command lines
 ---
-
-Update and upgrade packages
-> sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
-
-Nginx reload service
-> sudo nginx -t -c /etc/nginx/nginx.conf && sudo service nginx reload
 
 Changing your Git author identity [ref](https://www.git-tower.com/learn/git/faq/change-author-name-email)
 
