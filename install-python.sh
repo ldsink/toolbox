@@ -30,11 +30,22 @@ fi
 
 cd "${python_path}" || exit 1
 
-echo "Install required packages"
-sudo apt update
-sudo apt install -y make build-essential libssl-dev zlib1g-dev
-sudo apt install -y libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm
-sudo apt install -y libncurses5-dev libncursesw5-dev xz-utils tk-dev
+installRequiredDependencies() {
+  echo "Install required packages"
+  if which apt >/dev/null 2>&1; then
+    sudo apt update
+    sudo apt install -y make build-essential libssl-dev zlib1g-dev
+    sudo apt install -y libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm
+    sudo apt install -y libncurses5-dev libncursesw5-dev xz-utils tk-dev
+  elif which dnf >/dev/null 2>&1; then
+    dnf update
+    dnf install curl gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget make -y
+  elif which yum >/dev/null 2>&1; then
+    yum update
+    yum install curl gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget make -y
+  fi
+}
+installRequiredDependencies
 
 #echo "Download python source release"
 #wget "https://www.python.org/ftp/python/${python_version}/Python-${python_version}.tgz"
