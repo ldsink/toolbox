@@ -58,5 +58,5 @@ rm -f "Python-${python_version}.tgz"
 
 echo "Configure and install Python-${python-version}"
 cd "Python-${python_version}" || exit 2
-./configure --enable-optimizations
+./configure --enable-shared --enable-optimizations
 make -j8 && sudo make altinstall && sudo make clean
