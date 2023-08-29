@@ -10,8 +10,10 @@ if [ "$(id -u)" -ne "0" ] ; then
     exit
 fi
 
-# Purge ubuntu-advantage-tools
-apt purge ubuntu-advantage-tools -y
+# Purge unused packages
+# 1. ubuntu-advantage-tools
+# 2. snapd
+apt purge ubuntu-advantage-tools snapd -y
 
 # Disable the dynamic MOTD news service
 if [ -f /etc/default/motd-news ]; then
