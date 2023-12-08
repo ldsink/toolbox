@@ -9,12 +9,12 @@ scripts / commands
 
 Based on Debian, for deepin, ubuntu etc.
 
-| Description                       |  Usage                                                                                                                                                                                               |
-|-----------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 设置中国时区(Asia/Shanghai)                                                                                                 | `sudo timedatectl set-timezone Asia/Shanghai`                                                                                                                                                       |
-| 选择默认编辑器                                                                                                               | `sudo update-alternatives --config editor`                                                                                                                                                          |
-| debian 系升级系统                                                                                                         | `sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y`                                                                                                                                  |
-| `Ubuntu` 开启 `universe` 仓库                                                                                            | `sudo add-apt-repository universe`                                                                                                                                                                  |
+| Description               | Usage                                                              |
+|---------------------------|--------------------------------------------------------------------|
+| 设置中国时区(Asia/Shanghai)     | `sudo timedatectl set-timezone Asia/Shanghai`                      |
+| 选择默认编辑器                   | `sudo update-alternatives --config editor`                         |
+| debian 系升级系统              | `sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y` |
+| `Ubuntu` 开启 `universe` 仓库 | `sudo add-apt-repository universe`                                 |
 
 shell command lines
 ---
