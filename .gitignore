@@ -6,5 +6,5 @@ compose/clickhouse-cluster/clickhouse-log
 compose/clickhouse-standalone/clickhouse-data
 compose/clickhouse-standalone/clickhouse-log
 compose/postgres-standalone/pgdata
-compose/mysql-standalone/datadir
+compose/mysql-standalone/data
 compose/mongo-standalone/datadir
