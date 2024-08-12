@@ -47,10 +47,8 @@ installRequiredDependencies() {
 }
 installRequiredDependencies
 
-#echo "Download python source release"
-#wget "https://www.python.org/ftp/python/${python_version}/Python-${python_version}.tgz"
-echo "Download python source release from https://cdn.npmmirror.com/"
-wget "https://cdn.npmmirror.com/binaries/python/${python_version}/Python-${python_version}.tgz"
+echo "Download python source release"
+wget "https://www.python.org/ftp/python/${python_version}/Python-${python_version}.tgz"
 
 echo "Unzip source code"
 tar xvf "Python-${python_version}.tgz"
