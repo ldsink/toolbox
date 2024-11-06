@@ -3,7 +3,8 @@ FROM caddy:${VERSION}-builder-alpine AS builder
 
 RUN xcaddy build \
  --with github.com/caddy-dns/dnspod \
- --with github.com/porech/caddy-maxmind-geolocation
+ --with github.com/porech/caddy-maxmind-geolocation \
+ --with github.com/caddyserver/forwardproxy
 
 FROM caddy:${VERSION}-alpine
 
