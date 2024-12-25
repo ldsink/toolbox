@@ -3,16 +3,11 @@
 
 services:
   mysql:
-    image: mysql:8.3
+    image: mysql:8.4
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
     ports:
-      - 3306:3306
+      - 127.0.0.1:3306:3306
     volumes:
       - ./data:/var/lib/mysql
-  adminer:
-    image: adminer:4
-    restart: always
-    ports:
-      - 8080:8080

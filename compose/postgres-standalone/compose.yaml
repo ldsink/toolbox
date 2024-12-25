@@ -1,7 +1,7 @@
 # Use postgres/example user/password credentials
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -11,4 +11,4 @@ services:
     ports:
       - 127.0.0.1:5432:5432
     volumes:
-      - ./pg16-data:/var/lib/postgresql/data
+      - ./pg17-data:/var/lib/postgresql/data
