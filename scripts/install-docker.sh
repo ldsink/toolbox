@@ -1,34 +1,93 @@
 #!/bin/sh
 set -e
-# Docker CE for Linux installation script
+# Docker Engine for Linux installation script.
 #
-# See https://docs.docker.com/engine/install/ for the installation steps.
+# This script is intended as a convenient way to configure docker's package
+# repositories and to install Docker Engine, This script is not recommended
+# for production environments. Before running this script, make yourself familiar
+# with potential risks and limitations, and refer to the installation manual
+# at https://docs.docker.com/engine/install/ for alternative installation methods.
 #
-# This script is meant for quick & easy install via:
-#   $ curl -fsSL https://get.docker.com -o get-docker.sh
-#   $ sh get-docker.sh
+# The script:
 #
-# For test builds (ie. release candidates):
-#   $ curl -fsSL https://test.docker.com -o test-docker.sh
-#   $ sh test-docker.sh
+# - Requires `root` or `sudo` privileges to run.
+# - Attempts to detect your Linux distribution and version and configure your
+#   package management system for you.
+# - Doesn't allow you to customize most installation parameters.
+# - Installs dependencies and recommendations without asking for confirmation.
+# - Installs the latest stable release (by default) of Docker CLI, Docker Engine,
+#   Docker Buildx, Docker Compose, containerd, and runc. When using this script
+#   to provision a machine, this may result in unexpected major version upgrades
+#   of these packages. Always test upgrades in a test environment before
+#   deploying to your production systems.
+# - Isn't designed to upgrade an existing Docker installation. When using the
+#   script to update an existing installation, dependencies may not be updated
+#   to the expected version, resulting in outdated versions.
 #
-# NOTE: Make sure to verify the contents of the script
-#       you downloaded matches the contents of install.sh
-#       located at https://github.com/docker/docker-install
-#       before executing.
+# Source code is available at https://github.com/docker/docker-install/
 #
+# Usage
+# ==============================================================================
+#
+# To install the latest stable versions of Docker CLI, Docker Engine, and their
+# dependencies:
+#
+# 1. download the script
+#
+#   $ curl -fsSL https://get.docker.com -o install-docker.sh
+#
+# 2. verify the script's content
+#
+#   $ cat install-docker.sh
+#
+# 3. run the script with --dry-run to verify the steps it executes
+#
+#   $ sh install-docker.sh --dry-run
+#
+# 4. run the script either as root, or using sudo to perform the installation.
+#
+#   $ sudo sh install-docker.sh
+#
+# Command-line options
+# ==============================================================================
+#
+# --version <VERSION>
+# Use the --version option to install a specific version, for example:
+#
+#   $ sudo sh install-docker.sh --version 23.0
+#
+# --channel <stable|test>
+#
+# Use the --channel option to install from an alternative installation channel.
+# The following example installs the latest versions from the "test" channel,
+# which includes pre-releases (alpha, beta, rc):
+#
+#   $ sudo sh install-docker.sh --channel test
+#
+# Alternatively, use the script at https://test.docker.com, which uses the test
+# channel as default.
+#
+# --mirror <Aliyun|AzureChinaCloud>
+#
+# Use the --mirror option to install from a mirror supported by this script.
+# Available mirrors are "Aliyun" (https://mirrors.aliyun.com/docker-ce), and
+# "AzureChinaCloud" (https://mirror.azure.cn/docker-ce), for example:
+#
+#   $ sudo sh install-docker.sh --mirror AzureChinaCloud
+#
+# ==============================================================================
+
+
 # Git commit from https://github.com/docker/docker-install when
 # the script was uploaded (Should only be modified by upload job):
-SCRIPT_COMMIT_SHA="66474034547a96caa0a25be56051ff8b726a1b28"
+SCRIPT_COMMIT_SHA="53a22f61c0628e58e1d6680b49e82993d304b449"
 
 # strip "v" prefix if present
 VERSION="${VERSION#v}"
 
 # The channel to install from:
-#   * nightly
-#   * test
 #   * stable
-#   * edge (deprecated)
+#   * test
 DEFAULT_CHANNEL_VALUE="stable"
 if [ -z "$CHANNEL" ]; then
 	CHANNEL=$DEFAULT_CHANNEL_VALUE
@@ -42,18 +101,31 @@ fi
 DEFAULT_REPO_FILE="docker-ce.repo"
 if [ -z "$REPO_FILE" ]; then
 	REPO_FILE="$DEFAULT_REPO_FILE"
+	# Automatically default to a staging repo fora
+	# a staging download url (download-stage.docker.com)
+	case "$DOWNLOAD_URL" in
+		*-stage*) REPO_FILE="docker-ce-staging.repo";;
+	esac
 fi
 
 mirror=''
 DRY_RUN=${DRY_RUN:-}
 while [ $# -gt 0 ]; do
 	case "$1" in
-		--mirror)
-			mirror="$2"
+		--channel)
+			CHANNEL="$2"
 			shift
 			;;
 		--dry-run)
 			DRY_RUN=1
+			;;
+		--mirror)
+			mirror="$2"
+			shift
+			;;
+		--version)
+			VERSION="${2#v}"
+			shift
 			;;
 		--*)
 			echo "Illegal option $1"
@@ -69,40 +141,59 @@ case "$mirror" in
 	AzureChinaCloud)
 		DOWNLOAD_URL="https://mirror.azure.cn/docker-ce"
 		;;
+	"")
+		;;
+	*)
+		>&2 echo "unknown mirror '$mirror': use either 'Aliyun', or 'AzureChinaCloud'."
+		exit 1
+		;;
+esac
+
+case "$CHANNEL" in
+	stable|test)
+		;;
+	*)
+		>&2 echo "unknown CHANNEL '$CHANNEL': use either stable or test."
+		exit 1
+		;;
 esac
 
 command_exists() {
 	command -v "$@" > /dev/null 2>&1
 }
 
-# version_gte checks if the version specified in $VERSION is at least
-# the given CalVer (YY.MM) version. returns 0 (success) if $VERSION is either
-# unset (=latest) or newer or equal than the specified version. Returns 1 (fail)
-# otherwise.
+# version_gte checks if the version specified in $VERSION is at least the given
+# SemVer (Maj.Minor[.Patch]), or CalVer (YY.MM) version.It returns 0 (success)
+# if $VERSION is either unset (=latest) or newer or equal than the specified
+# version, or returns 1 (fail) otherwise.
 #
 # examples:
 #
-# VERSION=20.10
+# VERSION=23.0
+# version_gte 23.0  // 0 (success)
 # version_gte 20.10 // 0 (success)
 # version_gte 19.03 // 0 (success)
-# version_gte 21.10 // 1 (fail)
+# version_gte 26.1  // 1 (fail)
 version_gte() {
 	if [ -z "$VERSION" ]; then
 			return 0
 	fi
-	eval calver_compare "$VERSION" "$1"
+	version_compare "$VERSION" "$1"
 }
 
-# calver_compare compares two CalVer (YY.MM) version strings. returns 0 (success)
-# if version A is newer or equal than version B, or 1 (fail) otherwise. Patch
-# releases and pre-release (-alpha/-beta) are not taken into account
+# version_compare compares two version strings (either SemVer (Major.Minor.Path),
+# or CalVer (YY.MM) version strings. It returns 0 (success) if version A is newer
+# or equal than version B, or 1 (fail) otherwise. Patch releases and pre-release
+# (-alpha/-beta) are not taken into account
 #
 # examples:
 #
-# calver_compare 20.10 19.03 // 0 (success)
-# calver_compare 20.10 20.10 // 0 (success)
-# calver_compare 19.03 20.10 // 1 (fail)
-calver_compare() (
+# version_compare 23.0.0 20.10 // 0 (success)
+# version_compare 23.0 20.10   // 0 (success)
+# version_compare 20.10 19.03  // 0 (success)
+# version_compare 20.10 20.10  // 0 (success)
+# version_compare 19.03 20.10  // 1 (fail)
+version_compare() (
 	set +x
 
 	yy_a="$(echo "$1" | cut -d'.' -f1)"
@@ -115,7 +206,12 @@ calver_compare() (
 	fi
 	mm_a="$(echo "$1" | cut -d'.' -f2)"
 	mm_b="$(echo "$2" | cut -d'.' -f2)"
-	if [ "${mm_a#0}" -lt "${mm_b#0}" ]; then
+
+	# trim leading zeros to accommodate CalVer
+	mm_a="${mm_a#0}"
+	mm_b="${mm_b#0}"
+
+	if [ "${mm_a:-0}" -lt "${mm_b:-0}" ]; then
 		return 1
 	fi
 
@@ -244,6 +340,12 @@ check_forked() {
 				fi
 				dist_version="$(sed 's/\/.*//' /etc/debian_version | sed 's/\..*//')"
 				case "$dist_version" in
+					13)
+						dist_version="trixie"
+					;;
+					12)
+						dist_version="bookworm"
+					;;
 					11)
 						dist_version="bullseye"
 					;;
@@ -274,7 +376,9 @@ do_install() {
 			installation.
 
 			If you installed the current Docker package using this script and are using it
-			again to update Docker, you can safely ignore this message.
+			again to update Docker, you can ignore this message, but be aware that the
+			script resets any custom changes in the deb and rpm repo configuration
+			files to match the parameters passed to the script.
 
 			You may press Ctrl+C now to abort this script.
 		EOF
@@ -309,7 +413,7 @@ do_install() {
 	if is_wsl; then
 		echo
 		echo "WSL DETECTED: We recommend using Docker Desktop for Windows."
-		echo "Please get Docker Desktop from https://www.docker.com/products/docker-desktop"
+		echo "Please get Docker Desktop from https://www.docker.com/products/docker-desktop/"
 		echo
 		cat >&2 <<-'EOF'
 
@@ -332,6 +436,12 @@ do_install() {
 		debian|raspbian)
 			dist_version="$(sed 's/\/.*//' /etc/debian_version | sed 's/\..*//')"
 			case "$dist_version" in
+				13)
+					dist_version="trixie"
+				;;
+				12)
+					dist_version="bookworm"
+				;;
 				11)
 					dist_version="bullseye"
 				;;
@@ -347,7 +457,7 @@ do_install() {
 			esac
 		;;
 
-		centos|rhel|sles)
+		centos|rhel)
 			if [ -z "$dist_version" ] && [ -r /etc/os-release ]; then
 				dist_version="$(. /etc/os-release && echo "$VERSION_ID")"
 			fi
@@ -370,17 +480,23 @@ do_install() {
 	# Print deprecation warnings for distro versions that recently reached EOL,
 	# but may still be commonly used (especially LTS versions).
 	case "$lsb_dist.$dist_version" in
-		debian.stretch|debian.jessie)
+		centos.8|centos.7|rhel.7)
 			deprecation_notice "$lsb_dist" "$dist_version"
 			;;
-		raspbian.stretch|raspbian.jessie)
+		debian.buster|debian.stretch|debian.jessie)
 			deprecation_notice "$lsb_dist" "$dist_version"
 			;;
-		ubuntu.xenial|ubuntu.trusty)
+		raspbian.buster|raspbian.stretch|raspbian.jessie)
+			deprecation_notice "$lsb_dist" "$dist_version"
+			;;
+		ubuntu.bionic|ubuntu.xenial|ubuntu.trusty)
+			deprecation_notice "$lsb_dist" "$dist_version"
+			;;
+		ubuntu.mantic|ubuntu.lunar|ubuntu.kinetic|ubuntu.impish|ubuntu.hirsute|ubuntu.groovy|ubuntu.eoan|ubuntu.disco|ubuntu.cosmic)
 			deprecation_notice "$lsb_dist" "$dist_version"
 			;;
 		fedora.*)
-			if [ "$dist_version" -lt 33 ]; then
+			if [ "$dist_version" -lt 40 ]; then
 				deprecation_notice "$lsb_dist" "$dist_version"
 			fi
 			;;
@@ -389,22 +505,19 @@ do_install() {
 	# Run setup for each distro accordingly
 	case "$lsb_dist" in
 		ubuntu|debian|raspbian)
-			pre_reqs="apt-transport-https ca-certificates curl"
-			if ! command -v gpg > /dev/null; then
-				pre_reqs="$pre_reqs gnupg"
-			fi
-			apt_repo="deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] $DOWNLOAD_URL/linux/$lsb_dist $dist_version $CHANNEL"
+			pre_reqs="ca-certificates curl"
+			apt_repo="deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] $DOWNLOAD_URL/linux/$lsb_dist $dist_version $CHANNEL"
 			(
 				if ! is_dry_run; then
 					set -x
 				fi
-				$sh_c 'apt-get update -qq >/dev/null'
-				$sh_c "DEBIAN_FRONTEND=noninteractive apt-get install -y -qq $pre_reqs >/dev/null"
-				$sh_c 'mkdir -p /etc/apt/keyrings && chmod -R 0755 /etc/apt/keyrings'
-				$sh_c "curl -fsSL \"$DOWNLOAD_URL/linux/$lsb_dist/gpg\" | gpg --dearmor --yes -o /etc/apt/keyrings/docker.gpg"
-				$sh_c "chmod a+r /etc/apt/keyrings/docker.gpg"
+				$sh_c 'apt-get -qq update >/dev/null'
+				$sh_c "DEBIAN_FRONTEND=noninteractive apt-get -y -qq install $pre_reqs >/dev/null"
+				$sh_c 'install -m 0755 -d /etc/apt/keyrings'
+				$sh_c "curl -fsSL \"$DOWNLOAD_URL/linux/$lsb_dist/gpg\" -o /etc/apt/keyrings/docker.asc"
+				$sh_c "chmod a+r /etc/apt/keyrings/docker.asc"
 				$sh_c "echo \"$apt_repo\" > /etc/apt/sources.list.d/docker.list"
-				$sh_c 'apt-get update -qq >/dev/null'
+				$sh_c 'apt-get -qq update >/dev/null'
 			)
 			pkg_version=""
 			if [ -n "$VERSION" ]; then
@@ -412,8 +525,8 @@ do_install() {
 					echo "# WARNING: VERSION pinning is not supported in DRY_RUN"
 				else
 					# Will work for incomplete versions IE (17.12), but may not actually grab the "latest" if in the test channel
-					pkg_pattern="$(echo "$VERSION" | sed "s/-ce-/~ce~.*/g" | sed "s/-/.*/g")"
-					search_command="apt-cache madison 'docker-ce' | grep '$pkg_pattern' | head -1 | awk '{\$1=\$1};1' | cut -d' ' -f 3"
+					pkg_pattern="$(echo "$VERSION" | sed 's/-ce-/~ce~.*/g' | sed 's/-/.*/g')"
+					search_command="apt-cache madison docker-ce | grep '$pkg_pattern' | head -1 | awk '{\$1=\$1};1' | cut -d' ' -f 3"
 					pkg_version="$($sh_c "$search_command")"
 					echo "INFO: Searching repository for VERSION '$VERSION'"
 					echo "INFO: $search_command"
@@ -424,7 +537,7 @@ do_install() {
 						exit 1
 					fi
 					if version_gte "18.09"; then
-							search_command="apt-cache madison 'docker-ce-cli' | grep '$pkg_pattern' | head -1 | awk '{\$1=\$1};1' | cut -d' ' -f 3"
+							search_command="apt-cache madison docker-ce-cli | grep '$pkg_pattern' | head -1 | awk '{\$1=\$1};1' | cut -d' ' -f 3"
 							echo "INFO: $search_command"
 							cli_pkg_version="=$($sh_c "$search_command")"
 					fi
@@ -437,10 +550,6 @@ do_install() {
 						# older versions didn't ship the cli and containerd as separate packages
 						pkgs="$pkgs docker-ce-cli${cli_pkg_version%=} containerd.io"
 				fi
-				if version_gte "20.10" && [ "$(uname -m)" = "x86_64" ]; then
-						# also install the latest version of the "docker scan" cli-plugin (only supported on x86 currently)
-						pkgs="$pkgs docker-scan-plugin"
-				fi
 				if version_gte "20.10"; then
 						pkgs="$pkgs docker-compose-plugin docker-ce-rootless-extras$pkg_version"
 				fi
@@ -450,52 +559,71 @@ do_install() {
 				if ! is_dry_run; then
 					set -x
 				fi
-				$sh_c "DEBIAN_FRONTEND=noninteractive apt-get install -y -qq $pkgs >/dev/null"
+				$sh_c "DEBIAN_FRONTEND=noninteractive apt-get -y -qq install $pkgs >/dev/null"
 			)
 			echo_docker_as_nonroot
 			exit 0
 			;;
 		centos|fedora|rhel)
-			if [ "$(uname -m)" != "s390x" ] && [ "$lsb_dist" = "rhel" ]; then
-				echo "Packages for RHEL are currently only available for s390x."
+			if [ "$(uname -m)" = "s390x" ]; then
+				echo "Effective v27.5, please consult RHEL distro statement for s390x support."
 				exit 1
-			fi
-			if [ "$lsb_dist" = "fedora" ]; then
-				pkg_manager="dnf"
-				config_manager="dnf config-manager"
-				enable_channel_flag="--set-enabled"
-				disable_channel_flag="--set-disabled"
-				pre_reqs="dnf-plugins-core"
-				pkg_suffix="fc$dist_version"
-			else
-				pkg_manager="yum"
-				config_manager="yum-config-manager"
-				enable_channel_flag="--enable"
-				disable_channel_flag="--disable"
-				pre_reqs="yum-utils"
-				pkg_suffix="el"
 			fi
 			repo_file_url="$DOWNLOAD_URL/linux/$lsb_dist/$REPO_FILE"
 			(
 				if ! is_dry_run; then
 					set -x
 				fi
-				$sh_c "$pkg_manager install -y -q $pre_reqs"
-				$sh_c "$config_manager --add-repo $repo_file_url"
+				if command_exists dnf5; then
+					$sh_c "dnf -y -q --setopt=install_weak_deps=False install dnf-plugins-core"
+					$sh_c "dnf5 config-manager addrepo --overwrite --save-filename=docker-ce.repo --from-repofile='$repo_file_url'"
 
-				if [ "$CHANNEL" != "stable" ]; then
-					$sh_c "$config_manager $disable_channel_flag docker-ce-*"
-					$sh_c "$config_manager $enable_channel_flag docker-ce-$CHANNEL"
+					if [ "$CHANNEL" != "stable" ]; then
+						$sh_c "dnf5 config-manager setopt \"docker-ce-*.enabled=0\""
+						$sh_c "dnf5 config-manager setopt \"docker-ce-$CHANNEL.enabled=1\""
+					fi
+					$sh_c "dnf makecache"
+				elif command_exists dnf; then
+					$sh_c "dnf -y -q --setopt=install_weak_deps=False install dnf-plugins-core"
+					$sh_c "rm -f /etc/yum.repos.d/docker-ce.repo  /etc/yum.repos.d/docker-ce-staging.repo"
+					$sh_c "dnf config-manager --add-repo $repo_file_url"
+
+					if [ "$CHANNEL" != "stable" ]; then
+						$sh_c "dnf config-manager --set-disabled \"docker-ce-*\""
+						$sh_c "dnf config-manager --set-enabled \"docker-ce-$CHANNEL\""
+					fi
+					$sh_c "dnf makecache"
+				else
+					$sh_c "yum -y -q install yum-utils"
+					$sh_c "rm -f /etc/yum.repos.d/docker-ce.repo  /etc/yum.repos.d/docker-ce-staging.repo"
+					$sh_c "yum-config-manager --add-repo $repo_file_url"
+
+					if [ "$CHANNEL" != "stable" ]; then
+						$sh_c "yum-config-manager --disable \"docker-ce-*\""
+						$sh_c "yum-config-manager --enable \"docker-ce-$CHANNEL\""
+					fi
+					$sh_c "yum makecache"
 				fi
-				$sh_c "$pkg_manager makecache"
 			)
 			pkg_version=""
+			if command_exists dnf; then
+				pkg_manager="dnf"
+				pkg_manager_flags="-y -q --best"
+			else
+				pkg_manager="yum"
+				pkg_manager_flags="-y -q"
+			fi
 			if [ -n "$VERSION" ]; then
 				if is_dry_run; then
 					echo "# WARNING: VERSION pinning is not supported in DRY_RUN"
 				else
-					pkg_pattern="$(echo "$VERSION" | sed "s/-ce-/\\\\.ce.*/g" | sed "s/-/.*/g").*$pkg_suffix"
-					search_command="$pkg_manager list --showduplicates 'docker-ce' | grep '$pkg_pattern' | tail -1 | awk '{print \$2}'"
+					if [ "$lsb_dist" = "fedora" ]; then
+						pkg_suffix="fc$dist_version"
+					else
+						pkg_suffix="el"
+					fi
+					pkg_pattern="$(echo "$VERSION" | sed 's/-ce-/\\\\.ce.*/g' | sed 's/-/.*/g').*$pkg_suffix"
+					search_command="$pkg_manager list --showduplicates docker-ce | grep '$pkg_pattern' | tail -1 | awk '{print \$2}'"
 					pkg_version="$($sh_c "$search_command")"
 					echo "INFO: Searching repository for VERSION '$VERSION'"
 					echo "INFO: $search_command"
@@ -507,7 +635,7 @@ do_install() {
 					fi
 					if version_gte "18.09"; then
 						# older versions don't support a cli package
-						search_command="$pkg_manager list --showduplicates 'docker-ce-cli' | grep '$pkg_pattern' | tail -1 | awk '{print \$2}'"
+						search_command="$pkg_manager list --showduplicates docker-ce-cli | grep '$pkg_pattern' | tail -1 | awk '{print \$2}'"
 						cli_pkg_version="$($sh_c "$search_command" | cut -d':' -f 2)"
 					fi
 					# Cut out the epoch and prefix with a '-'
@@ -524,10 +652,6 @@ do_install() {
 						pkgs="$pkgs docker-ce-cli containerd.io"
 					fi
 				fi
-				if version_gte "20.10" && [ "$(uname -m)" = "x86_64" ]; then
-						# also install the latest version of the "docker scan" cli-plugin (only supported on x86 currently)
-						pkgs="$pkgs docker-scan-plugin"
-				fi
 				if version_gte "20.10"; then
 					pkgs="$pkgs docker-compose-plugin docker-ce-rootless-extras$pkg_version"
 				fi
@@ -537,89 +661,14 @@ do_install() {
 				if ! is_dry_run; then
 					set -x
 				fi
-				$sh_c "$pkg_manager install -y -q $pkgs"
+				$sh_c "$pkg_manager $pkg_manager_flags install $pkgs"
 			)
 			echo_docker_as_nonroot
 			exit 0
 			;;
 		sles)
-			if [ "$(uname -m)" != "s390x" ]; then
-				echo "Packages for SLES are currently only available for s390x"
-				exit 1
-			fi
-			if [ "$dist_version" = "15.3" ]; then
-				sles_version="SLE_15_SP3"
-			else
-				sles_minor_version="${dist_version##*.}"
-				sles_version="15.$sles_minor_version"
-			fi
-			opensuse_repo="https://download.opensuse.org/repositories/security:SELinux/$sles_version/security:SELinux.repo"
-			repo_file_url="$DOWNLOAD_URL/linux/$lsb_dist/$REPO_FILE"
-			pre_reqs="ca-certificates curl libseccomp2 awk"
-			(
-				if ! is_dry_run; then
-					set -x
-				fi
-				$sh_c "zypper install -y $pre_reqs"
-				$sh_c "zypper addrepo $repo_file_url"
-				if ! is_dry_run; then
-						cat >&2 <<-'EOF'
-						WARNING!!
-						openSUSE repository (https://download.opensuse.org/repositories/security:SELinux) will be enabled now.
-						Do you wish to continue?
-						You may press Ctrl+C now to abort this script.
-						EOF
-						( set -x; sleep 30 )
-				fi
-				$sh_c "zypper addrepo $opensuse_repo"
-				$sh_c "zypper --gpg-auto-import-keys refresh"
-				$sh_c "zypper lr -d"
-			)
-			pkg_version=""
-			if [ -n "$VERSION" ]; then
-				if is_dry_run; then
-					echo "# WARNING: VERSION pinning is not supported in DRY_RUN"
-				else
-					pkg_pattern="$(echo "$VERSION" | sed "s/-ce-/\\\\.ce.*/g" | sed "s/-/.*/g")"
-					search_command="zypper search -s --match-exact 'docker-ce' | grep '$pkg_pattern' | tail -1 | awk '{print \$6}'"
-					pkg_version="$($sh_c "$search_command")"
-					echo "INFO: Searching repository for VERSION '$VERSION'"
-					echo "INFO: $search_command"
-					if [ -z "$pkg_version" ]; then
-						echo
-						echo "ERROR: '$VERSION' not found amongst zypper list results"
-						echo
-						exit 1
-					fi
-					search_command="zypper search -s --match-exact 'docker-ce-cli' | grep '$pkg_pattern' | tail -1 | awk '{print \$6}'"
-					# It's okay for cli_pkg_version to be blank, since older versions don't support a cli package
-					cli_pkg_version="$($sh_c "$search_command")"
-					pkg_version="-$pkg_version"
-				fi
-			fi
-			(
-				pkgs="docker-ce$pkg_version"
-				if version_gte "18.09"; then
-					if [ -n "$cli_pkg_version" ]; then
-						# older versions didn't ship the cli and containerd as separate packages
-						pkgs="$pkgs docker-ce-cli-$cli_pkg_version containerd.io"
-					else
-						pkgs="$pkgs docker-ce-cli containerd.io"
-					fi
-				fi
-				if version_gte "20.10"; then
-					pkgs="$pkgs docker-compose-plugin docker-ce-rootless-extras$pkg_version"
-				fi
-				if version_gte "23.0"; then
-						pkgs="$pkgs docker-buildx-plugin"
-				fi
-				if ! is_dry_run; then
-					set -x
-				fi
-				$sh_c "zypper -q install -y $pkgs"
-			)
-			echo_docker_as_nonroot
-			exit 0
+			echo "Effective v27.5, please consult SLES distro statement for s390x support."
+			exit 1
 			;;
 		*)
 			if [ -z "$lsb_dist" ]; then
