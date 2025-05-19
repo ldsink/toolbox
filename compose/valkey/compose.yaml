@@ -3,6 +3,8 @@ services:
     image: valkey/valkey:8-alpine
     container_name: valkey
     restart: always
-    command: [ "valkey-server", "--save", '""', "--appendonly", "no" ]
+    command: [ "valkey-server" ]
+    environment:
+      - VALKEY_AOF_ENABLED=no
     ports:
       - 127.0.0.1:6379:6379
