@@ -1,4 +1,4 @@
-ARG VERSION=2.11.4
+ARG VERSION=2.11.7
 FROM caddy:${VERSION}-builder-alpine AS builder
 
 RUN xcaddy build \
