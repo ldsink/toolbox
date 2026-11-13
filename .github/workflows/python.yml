@@ -1,0 +1,41 @@
+name: Publish Python
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'images/python/**'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Read image version
+        id: version
+        run: |
+          version=$(sed -n 's/^ARG VERSION=//p' images/python/Dockerfile)
+          [[ "$version" =~ ^[0-9]+(\.[0-9]+)+$ ]]
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v7
+        with:
+          context: ./images/python
+          push: true
+          tags: ghcr.io/ldsink/python:${{ steps.version.outputs.value }}
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=gha,scope=python
+          cache-to: type=gha,scope=python,mode=max
