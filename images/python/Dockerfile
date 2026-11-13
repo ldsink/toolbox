@@ -1,26 +1,12 @@
 ARG VERSION=3.13
-FROM python:${VERSION}-alpine
+FROM python:${VERSION}-slim-trixie
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
-    PIP_NO_CACHE_DIR=true \
-    PIP_INDEX_URL=https://mirrors.tencent.com/pypi/simple
+    PIP_NO_CACHE_DIR=true
 
-RUN sed -i 's|https://dl-cdn.alpinelinux.org/alpine|https://mirrors.cloud.tencent.com/alpine|g' /etc/apk/repositories \
-    && apk add --no-cache \
-    gcc \
-    g++ \
-    musl-dev \
-    python3-dev \
-    make \
-    libffi-dev \
-    openssl-dev \
-    zlib-dev \
-    libstdc++ \
-    openblas-dev
-
-RUN pip install \
-    numpy==2.3.5 \
-    pandas==2.3.3 \
-    scipy==1.16.3 \
-    scikit-learn==1.7.2
+RUN python -m pip install --only-binary=:all: \
+    numpy==2.5.4 \
+    pandas==3.1.1 \
+    scipy==1.18.1 \
+    scikit-learn==1.9.1

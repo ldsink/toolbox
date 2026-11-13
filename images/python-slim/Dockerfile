@@ -1,15 +1,12 @@
 ARG VERSION=3.14
-# Based on Debian 13 (Trixie)
-FROM python:${VERSION}-slim
+FROM python:${VERSION}-slim-trixie
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
-    PIP_NO_CACHE_DIR=true \
-    PIP_INDEX_URL=https://mirrors.tencent.com/pypi/simple
+    PIP_NO_CACHE_DIR=true
 
-# 安装基础依赖和软件
-RUN sed -i -E "s/deb\.debian\.org/mirrors\.tencent\.com/g" /etc/apt/sources.list.d/debian.sources \
-    && apt clean && apt update \
-    && apt install --no-install-recommends -y dumb-init \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip3 install uv
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends dumb-init \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=ghcr.io/astral-sh/uv:0.13.8 /uv /uvx /usr/local/bin/
